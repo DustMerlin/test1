@@ -5,25 +5,62 @@
 #define fosc 11059200                          //宏定义晶振频率 11.0592MHZ
 #define timer1ms 1000
 //#define on 0
-//#define off 1        
-                            
-sbit DQ = P3^3;                                             //部分必要全局定义      //DS18B20管脚声明
-bit sflag;                                                                   //DS18B20数据初始化                           ？？？ 
+//#define off 1   
+
+sbit RS = P3^0;                                                   //1602声明
+sbit RW = P3^1;
+sbit E = P3^2;
+sbit DQ = P3^3;                                                   //DS18B20管脚声明
+bit sflag;                                                        //DS18B20数据初始化                           ？？？ 
 uint scnt = 0;
 uchar buf[2];
     
-        
-                         
-void delay(uint k);                         //函数声明部分 
-uchar scankey(void);                        //扫描键盘 
+                      
+void delay(uint k);                                   //函数声明部分 
+uchar scankey(void);                                  //扫描键盘 
 bit resetDS(void);                                    //DS复位时序函数 
 void writeDS(uchar value);                            //写DS命令函数
-uchar readDS(void);                                  //读取DS存储器中的数据函数 
+uchar readDS(void);                                   //读取DS存储器中的数据函数 
 void T0_ISR(void) interrupt 1;  
 void startdisplay(void);           
 void diaplay(uchar); 
 
+void Delay500us();
+void Delay68us();
 
+
+/*DS18B20初始化过程
+1.  init
+2.  skip rom(cch)
+3.  convert T(44h)
+4.  busy check
+5.  skip rom(cch)
+7.  read scratchpad(beh)
+8.  rce date
+9.  cal
+10. display
+*/
+
+
+//DS18B20初始化程序
+bit Init(void)                        
+{
+    bit flag;
+    DQ = 1;
+    Delay500us();
+    DQ = 0;
+    Delay68us();
+    DQ = 0;
+//    Delay (14);
+    flag = DQ;
+    Delay500us();
+    return flag;    
+}
+
+//DS18B20 read 0
+Read(void)
+{
+}
 
 int main()
 {
@@ -374,4 +411,30 @@ void T0_ISR(void) interrupt 1
 void display(uchar factnum)
 {
         
-}        
+} 
+
+//延时函数
+void Delay500us()		//@11.0592MHz
+{
+	unsigned char i, j;
+	_nop_();
+	_nop_();
+	i = 6;
+	j = 93;
+	do
+	{
+		while (--j);
+	} while (--i);
+}
+
+
+void Delay68us()		//@11.0592MHz
+{
+	unsigned char i, j;
+	i = 1;
+	j = 184;
+	do
+	{
+		while (--j);
+	} while (--i);
+}
