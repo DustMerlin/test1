@@ -5,8 +5,21 @@
 #define fosc 11059200                          //宏定义晶振频率 11.0592MHZ
 #define timer1ms 1000
 //#define on 0
-//#define off 1        
-                            
+//#define off 1    
+
+/*DS18B20初始化
+1.  init
+2.  skip rom(cch)
+3.  convert T(44h)
+4.  busy check
+5.  skip rom(cch)
+7.  read scratchpad(beh)
+8.  rce date
+9.  cal
+10. display
+*/
+
+
 sbit DQ = P3^3;                                             //部分必要全局定义      //DS18B20管脚声明
 bit sflag;                                                                   //DS18B20数据初始化                           ？？？ 
 uint scnt = 0;
